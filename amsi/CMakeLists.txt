@@ -149,10 +149,6 @@ add_executable(gps_imu_tight_ekf apps/gps_imu_tight_ekf.cpp )
 target_link_libraries(gps_imu_tight_ekf ${catkin_LIBRARIES})  
 add_dependencies(gps_imu_tight_ekf robot_vision_generate_messages_cpp)  
 
-add_executable(MMT2019_dataAnalysis apps/MMT2019_dataAnalysis.cpp )   
-target_link_libraries(MMT2019_dataAnalysis  ${catkin_LIBRARIES})  
-add_dependencies(MMT2019_dataAnalysis robot_vision_generate_messages_cpp)  
-
 add_executable(jdSensorFusion apps/jdSensorFusion.cpp )   
 target_link_libraries(jdSensorFusion gtsam ${catkin_LIBRARIES})  
 add_dependencies(jdSensorFusion robot_vision_generate_messages_cpp)  

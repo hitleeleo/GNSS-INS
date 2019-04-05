@@ -1236,10 +1236,10 @@ int main(int argc, char* argv[])
   initial_values.insert(C(correction_count), prior_cb);  
 
   // Assemble prior noise model and add it the graph.
-  noiseModel::Diagonal::shared_ptr pose_noise_model = noiseModel::Diagonal::Sigmas((Vector(6) << 0.01, 0.01, 0.01, 0.5, 0.5, 0.5).finished()); // rad,rad,rad,m, m, m
+  noiseModel::Diagonal::shared_ptr pose_noise_model = noiseModel::Diagonal::Sigmas((Vector(6) << 0.01, 0.01, 0.01, 3, 3, 3).finished()); // rad,rad,rad,m, m, m
   noiseModel::Diagonal::shared_ptr velocity_noise_model = noiseModel::Isotropic::Sigma(3,0.1); // m/s
   noiseModel::Diagonal::shared_ptr bias_noise_model = noiseModel::Isotropic::Sigma(6,1e-3);
-  noiseModel::Diagonal::shared_ptr cb_noise_model = noiseModel::Diagonal::Sigmas((Vector(2) << 1, 1).finished()); //  m, m noise model for clock noise
+  noiseModel::Diagonal::shared_ptr cb_noise_model = noiseModel::Diagonal::Sigmas((Vector(2) << 10, 10).finished()); //  m, m noise model for clock noise
 
   // Add all prior factors (pose, velocity, bias) to the graph.
   NonlinearFactorGraph *graph = new NonlinearFactorGraph();
@@ -1420,6 +1420,9 @@ int main(int argc, char* argv[])
       // Add clock bias prior factor for pseudorange observable
       // graph->add(PriorFactor<Point2>(C(correction_count), prev_cb,cb_noise_model)); // add prior for clock bias factor
 
+      // boost::shared_ptr<PriorFactor <Point2> > cbPrior(
+      //                   new PriorFactor<Point2>(C(correction_count), prev_cb, cb_noise_model));
+
       PseudorangeFactor_spp pseudorange_Factor_spp(X(correction_count), C(correction_count),range, satXYZ, sv_prn, nomXYZ, noiseModel::Diagonal::Sigmas( (gtsam::Vector(1) << SV_weight).finished()));
       graph->add(pseudorange_Factor_spp);
       std::cout<< "pseudorange weighting-> "<< SV_weight << std::endl;
@@ -1449,23 +1452,23 @@ int main(int argc, char* argv[])
       
 
 
-      // LevenbergMarquardtOptimizer optimizer(*graph, initial_values); // LevenbergMarquardtOptimizer
-      // const clock_t begin_time = clock(); 
+      LevenbergMarquardtOptimizer optimizer(*graph, initial_values); // LevenbergMarquardtOptimizer
+      const clock_t begin_time = clock(); 
       // DoglegOptimizer optimizer(*graph, initial_values); // DoglegOptimizer
-      // Values result = optimizer.optimize();
-      // cout << "****************************************************" << endl;
-      // std::cout << "this optimizer used  time -> " << float(clock() - begin_time) / CLOCKS_PER_SEC << "\n\n";
-
-
-      const clock_t begin_time = clock();
-      isam.update(*graph,initial_values);
-      isam.update();
-      Values result = isam.calculateEstimate();
-      
-      // result.print("Current estimate: ");
-      graph->resize(0);
-      initial_values.clear();
+      Values result = optimizer.optimize();
+      cout << "****************************************************" << endl;
       std::cout << "this optimizer used  time -> " << float(clock() - begin_time) / CLOCKS_PER_SEC << "\n\n";
+
+
+      // const clock_t begin_time = clock();
+      // isam.update(*graph,initial_values);
+      // isam.update();
+      // Values result = isam.calculateEstimate();
+      
+      // // result.print("Current estimate: ");
+      // graph->resize(0);
+      // initial_values.clear();
+      // std::cout << "this optimizer used  time -> " << float(clock() - begin_time) / CLOCKS_PER_SEC << "\n\n";
 
 
 
