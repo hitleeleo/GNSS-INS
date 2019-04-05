@@ -1,0 +1,63 @@
+ Command line instructions
+Git global setup
+
+git config --global user.name "weisongwen"
+git config --global user.email "17902061r@connect.polyu.hk"
+
+Create a new repository
+
+git clone git@gitlab.com:wenweisong/amsi.git
+cd amsi
+touch README.md
+git add README.md
+git commit -m "add README"
+git push -u origin master
+
+Existing folder
+
+cd existing_folder
+git init
+git remote add origin git@gitlab.com:wenweisong/amsi.git
+git add .
+git commit -m "Initial commit"
+git push -u origin master
+
+Existing Git repository
+
+cd existing_repo
+git remote rename origin old-origin
+git remote add origin git@gitlab.com:wenweisong/amsi.git
+git push -u origin --all
+git push -u origin --tags
+
+gitlab 切换分支命令行
+
+1、git branch    查看分支
+
+2、如果没有任何显示，两种情况  一是当前没有分支，二是没有切换到当前项目的目录
+
+此处讲述第二种情况，cd ～切换到项目路径
+
+3、git branch    再次查看分支  看是否包含需要的分支，如果没有，则创建一个新的分支
+
+4、git checkout -b feature/fangli_20170228  创建一个新的分支
+
+5、git branch    再次查看分支
+
+6、git pull   相当于是从远程获取最新版本并merge到本地
+
+7、git push -u origin master        上面命令将本地的master分支(也就是你本地自己的分支名称)推送到origin主机，同时指定origin为默认主机，后面就可以不加任何参数使用git push了。
+
+
+
+版本提交
+
+1、  git branch   查看分支
+
+2、  git status    查看状态  若是没有提交走第3步
+
+3、  git  add .    (use "git add <file>..." to update what will be committed)
+
+4、 git commit -m "Update main trip"    “”里面的内容为提交时的提示信息   提交代码到本地分支
+
+5、 git push    提交代码

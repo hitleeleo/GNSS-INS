@@ -1,0 +1,12 @@
+<launch>
+  <node name="buildingModelLoader"          pkg="amsi"  type="buildingModelLoader" output="screen">
+  <param name="directory"         type="string" value="/home/wenws/amsipolyu/src/amsi/data/buildingModel/ELCerritobuildingmodel.kml"/>  
+  <param name="resolution"     	  type="int"    value="2"/>
+  <param name="saved_skymask_dir" type="string" value="/home/wenws/amsipolyu/src/rtklibros/app/generate_skymask/skymask/ecerritoUCB/"/>
+  <param name="mannually_set_ref_llh"  type="bool"    value="true"/>
+  <param name="ref_lat"     	  type="double"    value="37.900821542769997"/>
+  <param name="ref_lon"     	  type="double"    value="-122.29973599215"/>
+  <param name="ref_alt"     	  type="double"    value="5"/>
+  <param name="ENU_LiDAR_Angle"     	  type="double"    value="68.5"/>
+  </node>
+</launch>

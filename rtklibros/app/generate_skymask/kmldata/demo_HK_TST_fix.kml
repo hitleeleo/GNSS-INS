@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>demo_HK_TST.kml</name>
+	<open>1</open>
+	<StyleMap id="line127">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line170</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line1291</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line100">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line1260">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line137</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line180</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line1316">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line14">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1351">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line1512">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line13117</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line14</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line125">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1390">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line143">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1200">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line118">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line1511">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line13110</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line12</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line1330">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line155">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1319</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line16</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line13113">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line1516">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1315</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line10</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line11">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line19">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line124">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1211</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line1200</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line1380">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line135">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line153">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1318</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line143</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line13118">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line1230">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1380</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line141</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="line154">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line13115</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line128</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line1317">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line139">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line1212">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1351</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line1101</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line13">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line157">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1313</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line147</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line180">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1101">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line1518">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line13112</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line126</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="line1340">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line136</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line133</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="line1513">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1316</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line18</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="line119">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1110</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line125</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line117">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1110">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line158">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1317</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line11</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line131">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line159">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1314</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line144</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line13115">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line10">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line145">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line113">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line130">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line118</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line132</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line1140">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1100">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line142">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line171">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line150">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line13114</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line146</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line1319">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1315">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line1240">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line123</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line120</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="line140">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1170</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line138</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line13111">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1313">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line112">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line160</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line122</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line1">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line110">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line1271">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line17</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line129</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line1280">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line160">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line12">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line122">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line1515">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1312</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line1</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line1310">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1211">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1318">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line126">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line115">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1280</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line100</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line123">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line15">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1311</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line145</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line141">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line1514">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line13118</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line13</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line146">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line16">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line152">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1310</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line114</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line1311">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line13116">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line134">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1360</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line1330</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line1350">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line13114">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1170">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line1517">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line13111</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line139</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="line1210">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line135</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line110</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line1312">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line1270">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line171</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line1290</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line144">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line132">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line116">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1291">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line151">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line131</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line142</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line13112">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line190">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line113</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line1140</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line136">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line1510">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line13116</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line19</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line170">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1360">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line120">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line13117">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line128">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line156">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line13113</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line117</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line17">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line129">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line114">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1314">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line13110">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line1290">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line137">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line147">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line18">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<Style id="line138">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line111">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line116</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line1390</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line133">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+	</Style>
+	<StyleMap id="line121">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line1350</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line1100</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Placemark>
+		<name>b17</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				114.1772621294604,22.29842880200087,58 114.1775072541416,22.29817969722738,58 114.1779592221551,22.29855498969319,58 114.177722584109,22.29879714231608,58 114.1772621294604,22.29842880200087,58 
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b17a</name>
+		<open>1</open>
+		<styleUrl>#line1512</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				114.1772621294604,22.29842880200087,74 114.1775072541416,22.29817969722738,74 114.1776604530771,22.29830748258805,74 114.1775083463516,22.29847868751756,74 114.1776562780622,22.2985987318542,74 114.1775761713892,22.29867840562233,74 114.1772621294604,22.29842880200087,74 
+			</coordinates>
+		</LineString>
+	</Placemark>
+</Document>
+</kml>

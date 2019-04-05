@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- arguments -->
+  <arg name="nodelet_manager" default="velodyne_nodelet_manager" />
+  <arg name="enable_floor_detection" default="true" />
+  <arg name="enable_gps" default="true" />
+
+  <!-- in case you use velodyne_driver, comment out the following line -->
+  <node pkg="nodelet" type="nodelet" name="$(arg nodelet_manager)" args="manager" output="screen"/>
+
+  <!-- prefiltering_nodelet -->
+  <node pkg="nodelet" type="nodelet" name="prefiltering_nodelet" args="load hdl_graph_slam/PrefilteringNodelet $(arg nodelet_manager)">
+    <param name="use_distance_filter" value="true" />
+    <param name="distance_near_thresh" value="0.1" />
+    <param name="distance_far_thresh" value="50.0" />
+    <!-- NONE, VOXELGRID, or APPROX_VOXELGRID -->
+    <param name="downsample_method" value="VOXELGRID" />
+    <param name="downsample_resolution" value="0.1" />
+    <!-- NONE, RADIUS, or STATISTICAL -->
+    <param name="outlier_removal_method" value="RADIUS" />
+    <param name="statistical_mean_k" value="30" />
+    <param name="statistical_stddev" value="1.2" />
+    <param name="radius_radius" value="0.5" />
+    <param name="radius_min_neighbors" value="2" />
+  </node>
+
+
+  <!-- floor_detection_nodelet -->
+  <node pkg="nodelet" type="nodelet" name="floor_detection_nodelet" args="load hdl_graph_slam/FloorDetectionNodelet $(arg nodelet_manager)" if="$(arg enable_floor_detection)">
+    <param name="sensor_height" value="0.1" />
+    <param name="height_clip_range" value="1.0" />
+    <param name="floor_pts_thresh" value="512" />
+  </node>
+
+  <!-- hdl_graph_slam_nodelet -->
+</launch>

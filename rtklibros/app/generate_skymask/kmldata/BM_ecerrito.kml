@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>demo_berk.kml</name>
+	<StyleMap id="line1518">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#line13112</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#line126</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="line13112">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff0055ff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="line126">
+		<LineStyle>
+			<width>2.5</width>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff0055ff</color>
+		</PolyStyle>
+	</Style>
+	<Placemark>
+		<name>b1</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.302402266828,37.90053834755398,13 -122.3023497874273,37.90042229601763,13 -122.3020098698223,37.90053593495402,13 -122.3020664099515,37.90064548872542,13 -122.302402266828,37.90053834755398,13
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b2</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.3020352447578,37.9005968463354,11 -122.3019352813278,37.9006229009165,11 -122.3019561316594,37.90067384056744,11 -122.3020596313258,37.90064379335012,11 -122.3020352447578,37.9005968463354,11
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b3</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.3017067982263,37.90076712990931,11 -122.3017586579862,37.90074982039658,11 -122.3016769800662,37.90055533646423,11 -122.3016136389636,37.90057637635792,11 -122.3017067982263,37.90076712990931,11
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b4</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.3016497144186,37.90077532595002,13 -122.3015467314178,37.90055982967448,13 -122.3014285534443,37.90059258323787,13 -122.3015332636734,37.90080781294245,13 -122.3016497144186,37.90077532595002,13
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b5</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.3015293401482,37.90081094698234,16 -122.3013972062914,37.90084784407414,16 -122.3012787977108,37.90060150822202,16 -122.3014101960294,37.90056178622165,16 -122.3015293401482,37.90081094698234,16
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b6</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.3013253170411,37.90086348724663,19 -122.3012540262693,37.9006869845238,19 -122.3008303576756,37.90079751044441,19 -122.300927530354,37.90097400229575,19 -122.3013253170411,37.90086348724663,19
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b7</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.3008319918071,37.90102275539024,19 -122.3006659597293,37.90106859366144,19 -122.300526900016,37.90073928661245,19 -122.3006938214473,37.90069815553756,19 -122.3008319918071,37.90102275539024,19
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b8</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.3005963999169,37.90105719734654,20 -122.3005314870951,37.90089762312348,20 -122.299965415623,37.90107785353276,20 -122.3000363388977,37.90123331639867,20 -122.3005963999169,37.90105719734654,20
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b9</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.3002392264451,37.90141110897242,14 -122.3003055861871,37.90138937248955,14 -122.3003741382069,37.90152735402409,14 -122.3004565458565,37.90150554940697,14 -122.3004953437459,37.90158253090023,14 -122.3003399990683,37.90163237057944,14 -122.3002392264451,37.90141110897242,14
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b10</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.3005416739833,37.90131218125195,14 -122.3006232841104,37.90128767493182,14 -122.3006654449809,37.9013732785669,14 -122.3006964576592,37.90136588801183,14 -122.3007330231293,37.90143849385811,14 -122.3005100769024,37.90150772263922,14 -122.3004765001412,37.90143436277744,14 -122.300583872606,37.90140019254325,14 -122.3005416739833,37.90131218125195,14
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b11</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.3009443797811,37.90118382757535,20 -122.3012551354613,37.90108787884401,20 -122.3012985623789,37.90118105663757,20 -122.3011026095631,37.90124122576285,20 -122.301154268374,37.90135923426789,20 -122.301042677586,37.90139042079967,20 -122.3009443797811,37.90118382757535,20
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b12</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.3013111030274,37.90111107791658,12 -122.3013548977229,37.90109421435317,12 -122.3013624612781,37.90110916454017,12 -122.3014032120313,37.90110104897471,12 -122.3014521434918,37.90120316139785,12 -122.301368967544,37.90122868502037,12 -122.3013111030274,37.90111107791658,12
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b13</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.3015126785775,37.90100436321279,14 -122.3015827714444,37.90098528279838,14 -122.3017775264682,37.90142363190524,14 -122.3017020115397,37.90144559911174,14 -122.3015126785775,37.90100436321279,14
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b14</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.3017744134648,37.90092103423339,15 -122.3018418757028,37.90106052879371,15 -122.3020642702256,37.90098571215183,15 -122.3020066310489,37.90084760984392,15 -122.3017744134648,37.90092103423339,15
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark>
+		<name>b15</name>
+		<styleUrl>#line1518</styleUrl>
+		<LineString>
+			<extrude>1</extrude>
+			<altitudeMode>absolute</altitudeMode>
+			<coordinates>
+				-122.3021001660134,37.9008432844682,13 -122.3020262274923,37.90086406895203,13 -122.3020921681143,37.90100696901114,13 -122.3021632591236,37.90098625504105,13 -122.3021001660134,37.9008432844682,13
+			</coordinates>
+		</LineString>
+	</Placemark>
+</Document>
+</kml>

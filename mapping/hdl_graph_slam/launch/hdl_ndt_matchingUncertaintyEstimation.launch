@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- arguments -->
+  <arg name="nodelet_manager" default="velodyne_nodelet_manager" />
+  <arg name="enable_floor_detection" default="true" />
+  <arg name="enable_gps" default="true" />
+
+  <!-- in case you use velodyne_driver, comment out the following line -->
+  <node pkg="nodelet" type="nodelet" name="$(arg nodelet_manager)" args="manager" output="screen"/>
+
+
+
+  <!-- floor_detection_nodelet -->
+  <node pkg="nodelet" type="nodelet" name="floor_detection_nodelet" args="load hdl_graph_slam/FloorDetectionNodelet $(arg nodelet_manager)" if="$(arg enable_floor_detection)">
+    <param name="sensor_height" value="2.0" />
+    <param name="height_clip_range" value="1.0" />
+    <param name="floor_pts_thresh" value="512" />
+  </node>
+
+  <!-- hdl_graph_slam_nodelet -->
+</launch>

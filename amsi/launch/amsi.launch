@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- arguments -->
+  <arg name="nodelet_manager" default="velodyne_nodelet_manager" />
+
+  <!-- in case you use velodyne_driver, comment out the following line -->
+  <node pkg="nodelet" type="nodelet" name="$(arg nodelet_manager)" args="manager" output="screen"/>
+
+        <!-- globalmap_server_nodelet -->
+    <node pkg="nodelet" type="nodelet" name="globalmap_server_nodelet" args="load amsi/GlobalmapServerNodelet $(arg nodelet_manager)">
+      <param name="globalmap_pcd" value="$(find amsi)/data/mapfile03.pcd" />
+      <param name="downsample_resolution" value="0.3" />
+    </node>
+
+    <!-- amsi_nodelet -->
+    <node pkg="nodelet" type="nodelet" name="amsi_nodelet" args="load amsi/amsiNodelet $(arg nodelet_manager)" output="screen">
+        <!-- imu settings -->
+        <!-- during "cool_time", imu inputs are ignored -->
+        <param name="use_imu" value="true" />
+        <param name="/use_sim_time" value="true" />
+        <param name="invert_imu" value="true" />
+        <param name="cool_time_duration" value="2.0" />
+        <!-- dgps settings in ENU -->
+        <param name="use_dgps" value="true" />
+        <!-- ndt settings -->
+        <!-- if NDT is slow for your PC, try DIRECT1 serach method, which is a bit unstable but extremely fast -->
+        <param name="ndt_neighbor_search_method" value="DIRECT7" />
+        <param name="ndt_resolution" value="1.0" />
+        <param name="downsample_resolution" value="0.1" />
+        <!-- if "specify_init_pose" is true, pose estimator will be initialized with the following params -->
+        <!-- otherwise, you need to input an initial pose with "2D Pose Estimate" on rviz" -->
+        <param name="specify_init_pose" value="true" />
+        <param name="init_pos_x" value="0.0" />
+        <param name="init_pos_y" value="0.0" />
+        <param name="init_pos_z" value="0.0" />
+        <param name="init_ori_w" value="1.0" />
+        <param name="init_ori_x" value="0.0" />
+        <param name="init_ori_y" value="0.0" />
+        <param name="init_ori_z" value="0.0" />
+
+        <!-- place to save the error " -->
+        <param name="specify_error_csv_directory" value="/home/wenws/amsipolyu/src/error.csv" />
+    </node>
+
+     <!-- shadow_matching_nodelet -->
+   <!--  <node pkg="nodelet" type="nodelet" name="shadow_matching_nodelet" args="load amsi/shadowmatchingNodelet $(arg nodelet_manager)" output="screen">
+    </node> -->
+</launch>

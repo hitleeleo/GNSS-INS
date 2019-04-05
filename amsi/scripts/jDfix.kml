@@ -1,0 +1,37 @@
+<Folder xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://www.opengis.net/kml/2.2">
+  <Placemark>
+    <Point>
+      <coordinates>116.4987018,39.7914285,0</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <Point>
+      <coordinates>116.498703,39.791426,0</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <Point>
+      <coordinates>116.4987042,39.7914236,0</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <Point>
+      <coordinates>116.4987055,39.7914213,0</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <Point>
+      <coordinates>116.4987068,39.791419,0</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <Point>
+      <coordinates>116.4987079,39.7914168,0</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <Point>
+      <coordinates>116.4987089,39.7914148,0</coordinates>
+    </Point>
+  </Placemark>
+</Folder>

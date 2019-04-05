@@ -1,0 +1,10 @@
+<launch>
+  <node name="rtklibros"          pkg="rtklibros"  type="generateSkymask_node" output="screen">
+  <param name="directory"         type="string" value="/home/wenws/amsipolyu/src/rtklibros/app/generate_skymask/kmldata/BM_ecerrito.kml"/>  
+  <param name="resolution"     	  type="int"    value="2"/>
+  <param name="saved_skymask_dir" type="string" value="/home/wenws/amsipolyu/src/rtklibros/app/generate_skymask/skymask/ecerritoUCB/"/>
+  <param name="mannually_set_ref_llh"  type="bool"    value="true"/>
+  <param name="ref_lat"     	  type="double"    value="37.900919"/>
+  <param name="ref_lon"     	  type="double"    value="-122.299739"/>
+  </node>
+</launch>
