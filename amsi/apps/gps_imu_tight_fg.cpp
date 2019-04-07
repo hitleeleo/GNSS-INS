@@ -82,6 +82,7 @@
 #include <gtsam/gnssNavigation/nonBiasStates.h>
 #include <gtsam/gnssNavigation/PseudorangeFactor_spp.h>
 #include <gtsam/robustModels/switchVariableLinear.h>
+#include <gtsam/robustModels/PseudorangeSwitchFactor.h>
 
 
 
@@ -102,6 +103,13 @@ using symbol_shorthand::V; // Vel   (xdot,ydot,zdot)
 using symbol_shorthand::B; // Bias  (ax,ay,az,gx,gy,gz)
 using symbol_shorthand::C; // Point2 receiver clock bias  (cb_g,cb_b)
 using symbol_shorthand::S; // switch factor
+
+bool enbale_CVM_factor = 1; // enable constant velocity factor
+bool enbale_SC_factor = 1; // enable switchable constraint factor
+bool enable_GNSS_loose_factor = 0; // enbale GNSS loose factor (use WLS solution)
+
+double _vx = 0, _vy = 0, _vz = 0; // 
+clock_t old_clock = clock();
 
 const string output_filename = "imuFactorExampleResults.csv";
 
@@ -137,9 +145,6 @@ nlosExclusion::GNSS_Raw_Array _GNSS_data; // save the GNSS data
 Point3 nomXYZ(-2418954.90428,5384679.60663,2407391.40139); // niutoujiao data
 // Point3 nomXYZ(-2417729.42895,5384849.60804,2408314.07879); // initial position : kowlontoon data
 
-bool use_CVM = 1; // use constant velocity model?
-double _vx = 0, _vy = 0, _vz = 0; // 
-clock_t old_clock = clock();
 
 
 
@@ -1244,7 +1249,11 @@ int main(int argc, char* argv[])
   initial_values.insert(V(correction_count), prior_velocity);
   initial_values.insert(B(correction_count), prior_imu_bias);  
   initial_values.insert(C(correction_count), prior_cb);  
-  initial_values.insert(S(correction_count), sw_prior);  
+  if(enbale_SC_factor)
+  {
+    initial_values.insert(S(correction_count), sw_prior);  
+  }
+ 
 
   // Assemble prior noise model and add it the graph.
   noiseModel::Diagonal::shared_ptr pose_noise_model = noiseModel::Diagonal::Sigmas((Vector(6) << 0.3, 0.3, 0.3, 5, 5, 5).finished()); // rad,rad,rad,m, m, m
@@ -1270,8 +1279,11 @@ int main(int argc, char* argv[])
   graph->add(PriorFactor<Vector3>(V(correction_count), prior_velocity,velocity_noise_model));
   graph->add(PriorFactor<imuBias::ConstantBias>(B(correction_count), prior_imu_bias,bias_noise_model));
   graph->add(PriorFactor<Point2>(C(correction_count), prior_cb,cb_noise_model)); // add prior for clock bias factor
-  graph->add(PriorFactor<Point2>(C(correction_count), prior_cb,cb_noise_model)); // add prior for clock bias factor
-
+   if(enbale_SC_factor)
+  {
+    graph->add(PriorFactor<SwitchVariableLinear>(S(correction_count), sw_prior,sw_noise_model)); // add prior for switchable factor
+  }
+  
   // We use the sensor specs to build the noise model for the IMU factor.
   
   // gievn in GTSAM example
@@ -1409,7 +1421,10 @@ int main(int argc, char* argv[])
                                   gps(1),  // E,
                                   gps(2)), // D,
                            correction_noise);
-      // graph->add(gps_factor);
+      if(enable_GNSS_loose_factor)
+      {
+        graph->add(gps_factor);
+      }
 
       for(int i =0; i < _GNSS_data.GNSS_Raws.size(); i++) // 
     {
@@ -1440,6 +1455,14 @@ int main(int argc, char* argv[])
       PseudorangeFactor_spp pseudorange_Factor_spp(X(correction_count), C(correction_count),range, satXYZ, sv_prn, nomXYZ, noiseModel::Diagonal::Sigmas( (gtsam::Vector(1) << SV_weight).finished()));
       graph->add(pseudorange_Factor_spp);
       // std::cout<< "pseudorange weighting-> "<< SV_weight << std::endl;
+
+       if(enbale_SC_factor)
+      {
+         /***********switchable constraint****************/
+        PseudorangeSwitchFactor PseudorangeSwitch_Factor(X(correction_count), C(correction_count), S(correction_count),range, satXYZ, sv_prn, nomXYZ, noiseModel::Diagonal::Sigmas( (gtsam::Vector(1) << SV_weight).finished()));
+        graph->add(PseudorangeSwitch_Factor);
+      }
+     
     }
       
 
@@ -1449,7 +1472,7 @@ int main(int argc, char* argv[])
       //                                                 C(correction_count  ), 
       //                                                 zero_cb, cb_noise_model));
       
-      if(use_CVM) // use constant velocity model
+      if(enbale_CVM_factor) // use constant velocity model
       {
         // Assemble initial quaternion through gtsam constructor ::quaternion(w,x,y,z);
         Rot3 between_rotation = Rot3::Quaternion(0.01, 0.01, 
@@ -1482,6 +1505,11 @@ int main(int argc, char* argv[])
       initial_values.insert(V(correction_count), prop_state.v());
       initial_values.insert(B(correction_count), prev_bias);
       initial_values.insert(C(correction_count), prev_cb); // clock bias 
+      if(enbale_SC_factor)
+      {
+        initial_values.insert(S(correction_count),SwitchVariableLinear(sw_prior)); // switchable factor
+      }
+      
 
       // GaussNewtonOptimizer optimizer(*graph, initial_values);
       // const clock_t begin_time = clock();
@@ -1489,23 +1517,23 @@ int main(int argc, char* argv[])
       // std::cout << "this optimizer used  time -> " << float(clock() - begin_time) / CLOCKS_PER_SEC << "\n\n";
 
 
-      LevenbergMarquardtOptimizer optimizer(*graph, initial_values); // LevenbergMarquardtOptimizer
-      const clock_t begin_time = clock(); 
-      // DoglegOptimizer optimizer(*graph, initial_values); // DoglegOptimizer
-      Values result = optimizer.optimize();
-      cout << "****************************************************" << endl;
-      std::cout << "this optimizer used  time -> " << float(clock() - begin_time) / CLOCKS_PER_SEC << "\n\n";
-
-
-      // const clock_t begin_time = clock();
-      // isam.update(*graph,initial_values);
-      // isam.update();
-      // Values result = isam.calculateEstimate();
-      
-      // // result.print("Current estimate: ");
-      // graph->resize(0);
-      // initial_values.clear();
+      // LevenbergMarquardtOptimizer optimizer(*graph, initial_values); // LevenbergMarquardtOptimizer
+      // const clock_t begin_time = clock(); 
+      // // DoglegOptimizer optimizer(*graph, initial_values); // DoglegOptimizer
+      // Values result = optimizer.optimize();
+      // cout << "****************************************************" << endl;
       // std::cout << "this optimizer used  time -> " << float(clock() - begin_time) / CLOCKS_PER_SEC << "\n\n";
+
+
+      const clock_t begin_time = clock();
+      isam.update(*graph,initial_values);
+      isam.update();
+      Values result = isam.calculateEstimate();
+      
+      // result.print("Current estimate: ");
+      graph->resize(0);
+      initial_values.clear();
+      std::cout << "this optimizer used  time -> " << float(clock() - begin_time) / CLOCKS_PER_SEC << "\n\n";
 
 
 
