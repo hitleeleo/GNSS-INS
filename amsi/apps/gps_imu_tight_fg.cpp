@@ -131,7 +131,13 @@ ros::Publisher span_odom_pub;
 
 nlosExclusion::GNSS_Raw_Array _GNSS_data; // save the GNSS data 
 
-Point3 nomXYZ(-2418954.90428,5384679.60663,2407391.40139);
+// Point3 nomXYZ(-2418954.90428,5384679.60663,2407391.40139); // 
+Point3 nomXYZ(-2417729.42895,5384849.60804,2408314.07879); // initial position 
+
+bool use_CVM = 1; // use constant velocity model?
+double _vx = 0, _vy = 0, _vz = 0; // 
+clock_t old_clock = clock();
+
 
 
 typedef struct
@@ -963,7 +969,7 @@ void ubloxFix_callback(const sensor_msgs::NavSatFixConstPtr& fix_msg)
     }
     // printf("WLS -> (%11.2f,%11.2f,%11.2f)\n\n", eWLSSolution(0), eWLSSolution(1), eWLSSolution(2));
     std::cout << std::setprecision(12);
-    cout<< "---------------WLS (ECEF) x, y, z, bias_gps, bias_beidou-----------------  \n"<<eWLSSolution<<endl;
+    // cout<< "---------------WLS (ECEF) x, y, z, bias_gps, bias_beidou-----------------  \n"<<eWLSSolution<<endl;
 
     return eWLSSolution;
   }
@@ -1103,7 +1109,7 @@ void ubloxFix_callback(const sensor_msgs::NavSatFixConstPtr& fix_msg)
     // odom_track.pose.pose.position.y = enu_wls(1) + random_N;
 
 
-    std::cout<< "enu_wls(0) -> "<< enu_wls(0) <<"enu_wls(1)-> "<< enu_wls(1) <<"psr_cov -> " <<psr_cov <<  std::endl;
+    // std::cout<< "enu_wls(0) -> "<< enu_wls(0) <<"enu_wls(1)-> "<< enu_wls(1) <<"psr_cov -> " <<psr_cov <<  std::endl;
 
     if(originllh_span.size()) // initial llh from span-cpt is available 
         gps_up = 1;
@@ -1236,8 +1242,8 @@ int main(int argc, char* argv[])
   initial_values.insert(C(correction_count), prior_cb);  
 
   // Assemble prior noise model and add it the graph.
-  noiseModel::Diagonal::shared_ptr pose_noise_model = noiseModel::Diagonal::Sigmas((Vector(6) << 0.01, 0.01, 0.01, 3, 3, 3).finished()); // rad,rad,rad,m, m, m
-  noiseModel::Diagonal::shared_ptr velocity_noise_model = noiseModel::Isotropic::Sigma(3,0.1); // m/s
+  noiseModel::Diagonal::shared_ptr pose_noise_model = noiseModel::Diagonal::Sigmas((Vector(6) << 0.3, 0.3, 0.3, 5, 5, 5).finished()); // rad,rad,rad,m, m, m
+  noiseModel::Diagonal::shared_ptr velocity_noise_model = noiseModel::Isotropic::Sigma(3,1); // 0.1 m/s
   noiseModel::Diagonal::shared_ptr bias_noise_model = noiseModel::Isotropic::Sigma(6,1e-3);
   noiseModel::Diagonal::shared_ptr cb_noise_model = noiseModel::Diagonal::Sigmas((Vector(2) << 10, 10).finished()); //  m, m noise model for clock noise
 
@@ -1274,8 +1280,8 @@ int main(int argc, char* argv[])
   double accel_noise_sigma = 0.1624;
   double gyro_noise_sigma = 0.205689024915;
 
-  double accel_bias_rw_sigma = 0.004905;
-  double gyro_bias_rw_sigma = 0.000001454441043;
+  double accel_bias_rw_sigma = 0.04905;
+  double gyro_bias_rw_sigma = 0.01454441043;
 
   Matrix33 measured_acc_cov = Matrix33::Identity(3,3) * pow(accel_noise_sigma,2);
   Matrix33 measured_omega_cov = Matrix33::Identity(3,3) * pow(gyro_noise_sigma,2);
@@ -1372,14 +1378,14 @@ int main(int argc, char* argv[])
                                    X(correction_count  ), V(correction_count  ),
                                    B(correction_count-1), B(correction_count  ),
                                    *preint_imu_combined);
-      graph->add(imu_factor);
+      // graph->add(imu_factor);
 #else
       PreintegratedImuMeasurements *preint_imu = dynamic_cast<PreintegratedImuMeasurements*>(imu_preintegrated_);
       ImuFactor imu_factor(X(correction_count-1), V(correction_count-1),
                            X(correction_count  ), V(correction_count  ),
                            B(correction_count-1),
                            *preint_imu);
-      graph->add(imu_factor);
+      // graph->add(imu_factor);
       imuBias::ConstantBias zero_bias(Vector3(0, 0, 0), Vector3(0, 0, 0));
       graph->add(BetweenFactor<imuBias::ConstantBias>(B(correction_count-1), 
                                                       B(correction_count  ), 
@@ -1398,7 +1404,7 @@ int main(int argc, char* argv[])
                            correction_noise);
       // graph->add(gps_factor);
 
-      for(int i =0; i < _GNSS_data.GNSS_Raws.size(); i++) // for weighted least square
+      for(int i =0; i < _GNSS_data.GNSS_Raws.size(); i++) // 
     {
       // add Gaussian noise
       std::default_random_engine generator;
@@ -1414,8 +1420,9 @@ int main(int argc, char* argv[])
       double sv_prn = _GNSS_data.GNSS_Raws[i].prn_satellites_index;
       Point3 satXYZ(_GNSS_data.GNSS_Raws[i].sat_pos_x, _GNSS_data.GNSS_Raws[i].sat_pos_y, _GNSS_data.GNSS_Raws[i].sat_pos_z);
       double range = _GNSS_data.GNSS_Raws[i].pseudorange;
-      double SV_weight = 1.0 / cofactorMatrixCal_single_satellite(_GNSS_data.GNSS_Raws[i].elevation, _GNSS_data.GNSS_Raws[i].snr);
-      SV_weight = SV_weight* 10; // 10 
+      double SV_weight = cofactorMatrixCal_single_satellite(_GNSS_data.GNSS_Raws[i].elevation, _GNSS_data.GNSS_Raws[i].snr);
+      SV_weight = SV_weight; // 10  error is about 10~50 meters
+      // SV_weight = 3; // 10 
 
       // Add clock bias prior factor for pseudorange observable
       // graph->add(PriorFactor<Point2>(C(correction_count), prev_cb,cb_noise_model)); // add prior for clock bias factor
@@ -1425,7 +1432,7 @@ int main(int argc, char* argv[])
 
       PseudorangeFactor_spp pseudorange_Factor_spp(X(correction_count), C(correction_count),range, satXYZ, sv_prn, nomXYZ, noiseModel::Diagonal::Sigmas( (gtsam::Vector(1) << SV_weight).finished()));
       graph->add(pseudorange_Factor_spp);
-      std::cout<< "pseudorange weighting-> "<< SV_weight << std::endl;
+      // std::cout<< "pseudorange weighting-> "<< SV_weight << std::endl;
     }
       
 
@@ -1434,6 +1441,29 @@ int main(int argc, char* argv[])
       // graph->add(BetweenFactor<Point2>(C(correction_count-1), 
       //                                                 C(correction_count  ), 
       //                                                 zero_cb, cb_noise_model));
+      
+      if(use_CVM) // use constant velocity model
+      {
+        // Assemble initial quaternion through gtsam constructor ::quaternion(w,x,y,z);
+        Rot3 between_rotation = Rot3::Quaternion(0.01, 0.01, 
+                                               0.01, 0.01);
+        double delta_clock_CVM = float(clock() - old_clock) / CLOCKS_PER_SEC;
+        // Point3 between_point(0.5, 0.5, 0.5);
+        Point3 between_point(_vx * delta_clock_CVM, _vy * delta_clock_CVM, _vz * delta_clock_CVM);
+        Pose3 between_pose(between_rotation, between_point);
+        Vector3 between_velocity(0.1, 0.1, 0.1);
+        noiseModel::Diagonal::shared_ptr between_pose_noise_model = noiseModel::Diagonal::Sigmas((Vector(6) << 0.1, 0.1, 0.1, 5, 5, 5).finished()); // rad,rad,rad,m, m, m
+        noiseModel::Diagonal::shared_ptr between_velocity_noise_model = noiseModel::Isotropic::Sigma(3,1); // 0.1 m/s
+        noiseModel::Diagonal::shared_ptr between_bias_noise_model = noiseModel::Isotropic::Sigma(6,1e-3);
+        noiseModel::Diagonal::shared_ptr between_cb_noise_model = noiseModel::Diagonal::Sigmas((Vector(2) << 10, 10).finished()); //  m, m noise model for clock noise
+        graph->add(BetweenFactor<Pose3>(X(correction_count-1), 
+                                                        X(correction_count  ), 
+                                                        between_pose, between_pose_noise_model));
+        
+        graph->add(BetweenFactor<Vector3>(V(correction_count-1), 
+                                                        V(correction_count  ), 
+                                                        between_velocity, between_velocity_noise_model));
+      }
       
       
       // Now optimize and compare results.
@@ -1447,9 +1477,6 @@ int main(int argc, char* argv[])
       // const clock_t begin_time = clock();
       // Values result = optimizer.optimize();
       // std::cout << "this optimizer used  time -> " << float(clock() - begin_time) / CLOCKS_PER_SEC << "\n\n";
-
-      
-      
 
 
       LevenbergMarquardtOptimizer optimizer(*graph, initial_values); // LevenbergMarquardtOptimizer
@@ -1486,6 +1513,12 @@ int main(int argc, char* argv[])
       // Print out the position and orientation error for comparison.
       Vector3 gtsam_position = prev_state.pose().translation();
 
+      double delta_clock = float(clock() - old_clock) / CLOCKS_PER_SEC;
+      _vx = ( gtsam_position.x() - result.at<Pose3>(X(correction_count - 1)).translation().x() ) / delta_clock;
+      _vy = ( gtsam_position.y() - result.at<Pose3>(X(correction_count - 1)).translation().y() ) / delta_clock;
+      _vx = ( gtsam_position.z() - result.at<Pose3>(X(correction_count - 1)).translation().z() ) / delta_clock;
+      old_clock = clock();
+
       Eigen::MatrixXd ecef_fg;
       Eigen::MatrixXd enu_fg;
       enu_fg.resize(3, 1);
@@ -1517,7 +1550,7 @@ int main(int argc, char* argv[])
 
       // display statistics
       // cout << "Position error:" << current_position_error << "\t " << "Angular error:" << current_orientation_error << "\n";
-      // cout<<"size of the graph ->"<<graph->size()<<endl;
+      cout<<"size of the graph ->"<<graph->size()<<endl;
       fprintf(fp_out, "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n", 
               output_time, gtsam_position(0), gtsam_position(1), gtsam_position(2),
               gtsam_quat.x(), gtsam_quat.y(), gtsam_quat.z(), gtsam_quat.w(),
