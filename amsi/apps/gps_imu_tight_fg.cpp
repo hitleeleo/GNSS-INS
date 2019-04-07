@@ -81,7 +81,7 @@
 #include <nlosExclusion/GNSS_Raw_Array.h>
 #include <gtsam/gnssNavigation/nonBiasStates.h>
 #include <gtsam/gnssNavigation/PseudorangeFactor_spp.h>
-
+#include <gtsam/robustModels/switchVariableLinear.h>
 
 
 
@@ -90,6 +90,8 @@
 
 using namespace gtsam;
 using namespace std;
+using namespace vertigo;
+
 // using namespace Eigen;
 #define INF 10000
 #define pi 3.1415926
@@ -99,6 +101,7 @@ using symbol_shorthand::X; // Pose3 (x,y,z,r,p,y)
 using symbol_shorthand::V; // Vel   (xdot,ydot,zdot)
 using symbol_shorthand::B; // Bias  (ax,ay,az,gx,gy,gz)
 using symbol_shorthand::C; // Point2 receiver clock bias  (cb_g,cb_b)
+using symbol_shorthand::S; // switch factor
 
 const string output_filename = "imuFactorExampleResults.csv";
 
@@ -131,8 +134,8 @@ ros::Publisher span_odom_pub;
 
 nlosExclusion::GNSS_Raw_Array _GNSS_data; // save the GNSS data 
 
-// Point3 nomXYZ(-2418954.90428,5384679.60663,2407391.40139); // 
-Point3 nomXYZ(-2417729.42895,5384849.60804,2408314.07879); // initial position 
+Point3 nomXYZ(-2418954.90428,5384679.60663,2407391.40139); // niutoujiao data
+// Point3 nomXYZ(-2417729.42895,5384849.60804,2408314.07879); // initial position : kowlontoon data
 
 bool use_CVM = 1; // use constant velocity model?
 double _vx = 0, _vy = 0, _vz = 0; // 
@@ -1232,6 +1235,7 @@ int main(int argc, char* argv[])
   Vector3 prior_velocity(initial_state.tail<3>());
   imuBias::ConstantBias prior_imu_bias; // assume zero initial bias
   Point2 prior_cb(0,0); // assume zero initial clock bias/
+  SwitchVariableLinear sw_prior(1.0);
   // Point2 prior_cb(56098484.0491,-98362089.033); // assume zero initial clock bias
 
   Values initial_values;
@@ -1240,12 +1244,14 @@ int main(int argc, char* argv[])
   initial_values.insert(V(correction_count), prior_velocity);
   initial_values.insert(B(correction_count), prior_imu_bias);  
   initial_values.insert(C(correction_count), prior_cb);  
+  initial_values.insert(S(correction_count), sw_prior);  
 
   // Assemble prior noise model and add it the graph.
   noiseModel::Diagonal::shared_ptr pose_noise_model = noiseModel::Diagonal::Sigmas((Vector(6) << 0.3, 0.3, 0.3, 5, 5, 5).finished()); // rad,rad,rad,m, m, m
   noiseModel::Diagonal::shared_ptr velocity_noise_model = noiseModel::Isotropic::Sigma(3,1); // 0.1 m/s
   noiseModel::Diagonal::shared_ptr bias_noise_model = noiseModel::Isotropic::Sigma(6,1e-3);
   noiseModel::Diagonal::shared_ptr cb_noise_model = noiseModel::Diagonal::Sigmas((Vector(2) << 10, 10).finished()); //  m, m noise model for clock noise
+  noiseModel::Diagonal::shared_ptr sw_noise_model = noiseModel::Diagonal::Sigmas((Vector(1) << 0.1).finished()); //  m, m noise model for clock noise
 
   // Add all prior factors (pose, velocity, bias) to the graph.
   NonlinearFactorGraph *graph = new NonlinearFactorGraph();
@@ -1263,6 +1269,7 @@ int main(int argc, char* argv[])
   graph->add(PriorFactor<Pose3>(X(correction_count), prior_pose, pose_noise_model));
   graph->add(PriorFactor<Vector3>(V(correction_count), prior_velocity,velocity_noise_model));
   graph->add(PriorFactor<imuBias::ConstantBias>(B(correction_count), prior_imu_bias,bias_noise_model));
+  graph->add(PriorFactor<Point2>(C(correction_count), prior_cb,cb_noise_model)); // add prior for clock bias factor
   graph->add(PriorFactor<Point2>(C(correction_count), prior_cb,cb_noise_model)); // add prior for clock bias factor
 
   // We use the sensor specs to build the noise model for the IMU factor.
@@ -1318,7 +1325,7 @@ int main(int argc, char* argv[])
   double current_position_error = 0.0, current_orientation_error = 0.0;
 
   double output_time = 0.0;
-  double dt = 0.005;  // The real system has noise, but here, results are nearly 
+  double dt = 0.001;  // The real system has noise, but here, results are nearly  100 hz for our imu
                       // exactly the same, so keeping this for simplicity.
 
   // All priors have been set up, now iterate through the data file.
@@ -1387,9 +1394,9 @@ int main(int argc, char* argv[])
                            *preint_imu);
       // graph->add(imu_factor);
       imuBias::ConstantBias zero_bias(Vector3(0, 0, 0), Vector3(0, 0, 0));
-      graph->add(BetweenFactor<imuBias::ConstantBias>(B(correction_count-1), 
-                                                      B(correction_count  ), 
-                                                      zero_bias, bias_noise_model));
+      // graph->add(BetweenFactor<imuBias::ConstantBias>(B(correction_count-1), 
+      //                                                 B(correction_count  ), 
+      //                                                 zero_bias, bias_noise_model));
 #endif
 
       //noiseModel::Isotropic::Sigma(3,0.01)
@@ -1463,6 +1470,9 @@ int main(int argc, char* argv[])
         graph->add(BetweenFactor<Vector3>(V(correction_count-1), 
                                                         V(correction_count  ), 
                                                         between_velocity, between_velocity_noise_model));
+        graph->add(BetweenFactor<imuBias::ConstantBias>(B(correction_count-1), 
+                                                      B(correction_count  ), 
+                                                      zero_bias, bias_noise_model));
       }
       
       
@@ -1513,6 +1523,7 @@ int main(int argc, char* argv[])
       // Print out the position and orientation error for comparison.
       Vector3 gtsam_position = prev_state.pose().translation();
 
+      /** *********estimate velocity **************/
       double delta_clock = float(clock() - old_clock) / CLOCKS_PER_SEC;
       _vx = ( gtsam_position.x() - result.at<Pose3>(X(correction_count - 1)).translation().x() ) / delta_clock;
       _vy = ( gtsam_position.y() - result.at<Pose3>(X(correction_count - 1)).translation().y() ) / delta_clock;
