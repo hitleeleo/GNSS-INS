@@ -84,6 +84,11 @@
 #include <gtsam/robustModels/switchVariableLinear.h>
 #include <gtsam/robustModels/PseudorangeSwitchFactor.h>
 
+#include <tf/tf.h>
+#include <tf/transform_broadcaster.h>
+#include <tf/transform_datatypes.h>
+#include <tf/transform_listener.h>
+
 
 
 // Uncomment line below to use the CombinedIMUFactor as opposed to the standard ImuFactor.
@@ -104,12 +109,16 @@ using symbol_shorthand::B; // Bias  (ax,ay,az,gx,gy,gz)
 using symbol_shorthand::C; // Point2 receiver clock bias  (cb_g,cb_b)
 using symbol_shorthand::S; // switch factor
 
+bool enable_IMUPreintegration_factor = 0; // enable imu pre-integration factor 
+bool enable_Pr_factor = 1; //enable pseudorange factor
 bool enbale_CVM_factor = 1; // enable constant velocity factor
-bool enbale_SC_factor = 1; // enable switchable constraint factor
+bool enbale_SCP_factor = 0; // enable switchable constraint pseudorange factor
 bool enable_GNSS_loose_factor = 0; // enbale GNSS loose factor (use WLS solution)
 
 double _vx = 0, _vy = 0, _vz = 0; // 
 clock_t old_clock = clock();
+clock_t old_imu_clock = clock();
+
 
 const string output_filename = "imuFactorExampleResults.csv";
 
@@ -125,6 +134,10 @@ int imu_co=0;
 
 bool gps_up = 0;
 nav_msgs::Odometry odom_track,span_odom, odom_track_ENU, span_odom_ecef;
+
+Eigen::MatrixXd orientation_matrix, acceleration_rotation;
+double x,y,z,w;
+
 
 // gnss_tools
 GNSS_Tools gnss_tools_;
@@ -144,6 +157,9 @@ nlosExclusion::GNSS_Raw_Array _GNSS_data; // save the GNSS data
 
 Point3 nomXYZ(-2418954.90428,5384679.60663,2407391.40139); // niutoujiao data
 // Point3 nomXYZ(-2417729.42895,5384849.60804,2408314.07879); // initial position : kowlontoon data
+// Point3 nomXYZ(0, 0, 0); // niutoujiao data
+double prediction_pre_t=0;
+
 
 
 
@@ -301,26 +317,6 @@ double nstamp = 0;
     // std::cout << " IMU data call back" << input->angular_velocity.x << std::endl;
     imu_track = * input;
 
-    // imu_track.linear_acceleration.x = imu_track.linear_acceleration.x * g_;
-    // imu_track.linear_acceleration.y = imu_track.linear_acceleration.y * g_;
-    // imu_track.linear_acceleration.z = imu_track.linear_acceleration.z * g_;
-
-    /****in the tightly coupled GNSS/INS integration, navigation frame is ECEF***/
-    if(originllh_span.rows() > 1)
-    {
-      double lon = (double)originllh_span(0) * D2R;
-      double lat = (double)originllh_span(1) * D2R;
-
-
-      double e = imu_track.linear_acceleration.x; // acc in enu 
-      double n = imu_track.linear_acceleration.y;
-      double u = imu_track.linear_acceleration.z;
-
-
-      imu_track.linear_acceleration.x = 0 - sin(lon) * e - cos(lon) * sin(lat) * n + cos(lon) * cos(lat) * u; // transfrom the acc from enu to ecef
-      imu_track.linear_acceleration.y = 0 + cos(lon) * e - sin(lon) * sin(lat) * n + cos(lat) * sin(lon) * u;
-      imu_track.linear_acceleration.z = 0 + cos(lat) * n + sin(lat) * u;
-    }
     
     imu_queue.push_back(imu_track);
     // cout<<"imu_queue_size -> "<<imu_queue.size()<<endl;
@@ -360,9 +356,56 @@ double nstamp = 0;
 
       imu_track.linear_acceleration.x = imu_track.linear_acceleration.x - (-0.0223799);
       imu_track.linear_acceleration.y = imu_track.linear_acceleration.y - (-0.1048587);
-      imu_track.linear_acceleration.z = imu_track.linear_acceleration.z - (9.791944);
+      imu_track.linear_acceleration.z = imu_track.linear_acceleration.z - (9.791944); //9.791944
+      // imu_track.linear_acceleration.z = imu_track.linear_acceleration.z - (0.01);
       offline_cal_success = 1;
     }
+
+
+     /****in the tightly coupled GNSS/INS integration, transfer imu from body to local frame***/
+    x = imu_track.orientation.x;
+    y = imu_track.orientation.y;
+    z = imu_track.orientation.z;
+    w = imu_track.orientation.w;
+    double imu_roll, imu_pitch, imu_yaw;
+    tf::Quaternion imu_orientation;
+    tf::quaternionMsgToTF(input->orientation, imu_orientation);
+    tf::Matrix3x3(imu_orientation).getRPY(imu_roll, imu_pitch, imu_yaw);
+    // cout<<"yaw : = " <<imu_yaw*(180/3.14)<<endl;
+    // cout<<imu_track.orientation.x<<endl;
+    // cout<<"imu_track.linear_acceleration.x : = " <<endl<<imu_track.linear_acceleration.x<<endl;
+    Eigen::Quaterniond q(w,x,y,z);
+    q.normalized();
+    Eigen::Matrix3d rotation_matrix;
+    rotation_matrix=q.toRotationMatrix();
+    orientation_matrix.resize(3,1);
+    orientation_matrix<<imu_track.linear_acceleration.x,
+                        imu_track.linear_acceleration.y,
+                        imu_track.linear_acceleration.z;
+    acceleration_rotation = rotation_matrix.transpose() * orientation_matrix;
+
+    // cout<<"acceleration_rotation : = " <<endl<<acceleration_rotation<<endl;
+    imu_track.linear_acceleration.x = acceleration_rotation(0,0);
+    imu_track.linear_acceleration.y = acceleration_rotation(1,0);
+    imu_track.linear_acceleration.z = acceleration_rotation(2,0);
+
+    /****in the tightly coupled GNSS/INS integration, navigation frame is ECEF***/
+    if(originllh_span.rows() > 1)
+    {
+      double lon = (double)originllh_span(0) * D2R;
+      double lat = (double)originllh_span(1) * D2R;
+
+
+      double e = imu_track.linear_acceleration.x; // acc in enu 
+      double n = imu_track.linear_acceleration.y;
+      double u = imu_track.linear_acceleration.z;
+
+
+      imu_track.linear_acceleration.x = 0 - sin(lon) * e - cos(lon) * sin(lat) * n + cos(lon) * cos(lat) * u; // transfrom the acc from enu to ecef
+      imu_track.linear_acceleration.y = 0 + cos(lon) * e - sin(lon) * sin(lat) * n + cos(lat) * sin(lon) * u;
+      imu_track.linear_acceleration.z = 0 + cos(lat) * n + sin(lat) * u;
+    }
+
     imu_up =1;
     imu_co++;
   }
@@ -1249,7 +1292,7 @@ int main(int argc, char* argv[])
   initial_values.insert(V(correction_count), prior_velocity);
   initial_values.insert(B(correction_count), prior_imu_bias);  
   initial_values.insert(C(correction_count), prior_cb);  
-  if(enbale_SC_factor)
+  if(enbale_SCP_factor)
   {
     initial_values.insert(S(correction_count), sw_prior);  
   }
@@ -1279,7 +1322,7 @@ int main(int argc, char* argv[])
   graph->add(PriorFactor<Vector3>(V(correction_count), prior_velocity,velocity_noise_model));
   graph->add(PriorFactor<imuBias::ConstantBias>(B(correction_count), prior_imu_bias,bias_noise_model));
   graph->add(PriorFactor<Point2>(C(correction_count), prior_cb,cb_noise_model)); // add prior for clock bias factor
-   if(enbale_SC_factor)
+   if(enbale_SCP_factor)
   {
     graph->add(PriorFactor<SwitchVariableLinear>(S(correction_count), sw_prior,sw_noise_model)); // add prior for switchable factor
   }
@@ -1299,15 +1342,16 @@ int main(int argc, char* argv[])
   double accel_noise_sigma = 0.1624;
   double gyro_noise_sigma = 0.205689024915;
 
-  double accel_bias_rw_sigma = 0.04905;
-  double gyro_bias_rw_sigma = 0.01454441043;
+  double accel_bias_rw_sigma = 0.1905;
+  double gyro_bias_rw_sigma = 0.1454441043;
 
   Matrix33 measured_acc_cov = Matrix33::Identity(3,3) * pow(accel_noise_sigma,2);
   Matrix33 measured_omega_cov = Matrix33::Identity(3,3) * pow(gyro_noise_sigma,2);
-  Matrix33 integration_error_cov = Matrix33::Identity(3,3)*1e-8; // error committed in integrating position from velocities
+  Matrix33 integration_error_cov = Matrix33::Identity(3,3)*5; // error committed in integrating position from velocities
+
   Matrix33 bias_acc_cov = Matrix33::Identity(3,3) * pow(accel_bias_rw_sigma,2);
   Matrix33 bias_omega_cov = Matrix33::Identity(3,3) * pow(gyro_bias_rw_sigma,2);
-  Matrix66 bias_acc_omega_int = Matrix::Identity(6,6)*1e-5; // error in the bias used for preintegration
+  Matrix66 bias_acc_omega_int = Matrix::Identity(6,6)*2; // error in the bias used for preintegration
 
   boost::shared_ptr<PreintegratedCombinedMeasurements::Params> p = PreintegratedCombinedMeasurements::Params::MakeSharedD(0.0);
   // PreintegrationBase params:
@@ -1337,11 +1381,12 @@ int main(int argc, char* argv[])
   double current_position_error = 0.0, current_orientation_error = 0.0;
 
   double output_time = 0.0;
-  double dt = 0.001;  // The real system has noise, but here, results are nearly  100 hz for our imu
+  
+  double dt = 0.01;  // The real system has noise, but here, results are nearly  100 hz for our imu
                       // exactly the same, so keeping this for simplicity.
 
   // All priors have been set up, now iterate through the data file.
-  ros::Rate rate(10); // usually ok when rate(10)
+  ros::Rate rate(1000); // usually ok when rate(10)
   while (ros::ok()) { //ros::ok()
     ros::spinOnce();
     rate.sleep();
@@ -1357,9 +1402,24 @@ int main(int argc, char* argv[])
       imu(3) = imu_track.angular_velocity.x ;
       imu(4) = imu_track.angular_velocity.y ;
       imu(5) = imu_track.angular_velocity.z ;
+      
 
       // Adding the IMU preintegration.
+      double delta_clock_imu = float(clock() - old_imu_clock) / CLOCKS_PER_SEC;
+      old_imu_clock = clock();
+      // Adding the IMU preintegration.
+        if(prediction_pre_t == 0)
+      {
+        prediction_pre_t = imu_track.header.stamp.toSec();
+      }
+
+      double delta_t = imu_track.header.stamp.toSec() -  prediction_pre_t;
+      // cout<<"delta_t ->" <<delta_t<<endl;
       imu_preintegrated_->integrateMeasurement(imu.head<3>(), imu.tail<3>(), dt);
+      prediction_pre_t = imu_track.header.stamp.toSec();  
+
+      // cout<<"imu_track.linear_acceleration.z ->" <<imu_track.linear_acceleration.z <<  "  delta_clock_imu-> " << delta_clock_imu<<endl;
+      // imu_preintegrated_->integrateMeasurement(imu.head<3>(), imu.tail<3>(), delta_t);
       imu_up = 0;
 
     } 
@@ -1397,18 +1457,25 @@ int main(int argc, char* argv[])
                                    X(correction_count  ), V(correction_count  ),
                                    B(correction_count-1), B(correction_count  ),
                                    *preint_imu_combined);
-      // graph->add(imu_factor);
+      if(enable_IMUPreintegration_factor)
+      {
+        graph->add(imu_factor);
+      }
 #else
       PreintegratedImuMeasurements *preint_imu = dynamic_cast<PreintegratedImuMeasurements*>(imu_preintegrated_);
       ImuFactor imu_factor(X(correction_count-1), V(correction_count-1),
                            X(correction_count  ), V(correction_count  ),
                            B(correction_count-1),
                            *preint_imu);
-      // graph->add(imu_factor);
       imuBias::ConstantBias zero_bias(Vector3(0, 0, 0), Vector3(0, 0, 0));
-      // graph->add(BetweenFactor<imuBias::ConstantBias>(B(correction_count-1), 
-      //                                                 B(correction_count  ), 
-      //                                                 zero_bias, bias_noise_model));
+      if(enable_IMUPreintegration_factor)
+      {
+        graph->add(imu_factor);
+        graph->add(BetweenFactor<imuBias::ConstantBias>(B(correction_count-1), 
+                                                        B(correction_count  ), 
+                                                        zero_bias, bias_noise_model));
+      }
+      
 #endif
 
       //noiseModel::Isotropic::Sigma(3,0.01)
@@ -1426,52 +1493,7 @@ int main(int argc, char* argv[])
         graph->add(gps_factor);
       }
 
-      for(int i =0; i < _GNSS_data.GNSS_Raws.size(); i++) // 
-    {
-      // add Gaussian noise
-      std::default_random_engine generator;
-
-
-      auto dist_E = std::bind(std::normal_distribution<double>{0, 10},
-                      std::mt19937(std::random_device{}()));
-      double random_psr = dist_E();
-
-      // std::cout<<"span_ecef -> "<<span_ecef<<std::endl; 
-
-      // Add constraint for pseudorange observable
-      double sv_prn = _GNSS_data.GNSS_Raws[i].prn_satellites_index;
-      Point3 satXYZ(_GNSS_data.GNSS_Raws[i].sat_pos_x, _GNSS_data.GNSS_Raws[i].sat_pos_y, _GNSS_data.GNSS_Raws[i].sat_pos_z);
-      double range = _GNSS_data.GNSS_Raws[i].pseudorange;
-      double SV_weight = cofactorMatrixCal_single_satellite(_GNSS_data.GNSS_Raws[i].elevation, _GNSS_data.GNSS_Raws[i].snr);
-      SV_weight = SV_weight; // 10  error is about 10~50 meters
-      // SV_weight = 3; // 10 
-
-      // Add clock bias prior factor for pseudorange observable
-      // graph->add(PriorFactor<Point2>(C(correction_count), prev_cb,cb_noise_model)); // add prior for clock bias factor
-
-      // boost::shared_ptr<PriorFactor <Point2> > cbPrior(
-      //                   new PriorFactor<Point2>(C(correction_count), prev_cb, cb_noise_model));
-
-      PseudorangeFactor_spp pseudorange_Factor_spp(X(correction_count), C(correction_count),range, satXYZ, sv_prn, nomXYZ, noiseModel::Diagonal::Sigmas( (gtsam::Vector(1) << SV_weight).finished()));
-      graph->add(pseudorange_Factor_spp);
-      // std::cout<< "pseudorange weighting-> "<< SV_weight << std::endl;
-
-       if(enbale_SC_factor)
-      {
-         /***********switchable constraint****************/
-        PseudorangeSwitchFactor PseudorangeSwitch_Factor(X(correction_count), C(correction_count), S(correction_count),range, satXYZ, sv_prn, nomXYZ, noiseModel::Diagonal::Sigmas( (gtsam::Vector(1) << SV_weight).finished()));
-        graph->add(PseudorangeSwitch_Factor);
-      }
-     
-    }
-      
-
-      /***********add clock bias factor************/
-      Point2 zero_cb(0,0); // assume zero initial clock bias
-      // graph->add(BetweenFactor<Point2>(C(correction_count-1), 
-      //                                                 C(correction_count  ), 
-      //                                                 zero_cb, cb_noise_model));
-      
+      /************add CVM factor************/
       if(enbale_CVM_factor) // use constant velocity model
       {
         // Assemble initial quaternion through gtsam constructor ::quaternion(w,x,y,z);
@@ -1497,6 +1519,60 @@ int main(int argc, char* argv[])
                                                       B(correction_count  ), 
                                                       zero_bias, bias_noise_model));
       }
+
+    /***************add pseudorange factor****************/
+      for(int i =0; i < _GNSS_data.GNSS_Raws.size(); i++) // 
+    {
+      // add Gaussian noise
+      std::default_random_engine generator;
+
+
+      auto dist_E = std::bind(std::normal_distribution<double>{0, 10},
+                      std::mt19937(std::random_device{}()));
+      double random_psr = dist_E();
+
+      // std::cout<<"span_ecef -> "<<span_ecef<<std::endl; 
+
+      // Add constraint for pseudorange observable
+      double sv_prn = _GNSS_data.GNSS_Raws[i].prn_satellites_index;
+      Point3 satXYZ(_GNSS_data.GNSS_Raws[i].sat_pos_x, _GNSS_data.GNSS_Raws[i].sat_pos_y, _GNSS_data.GNSS_Raws[i].sat_pos_z);
+      double range = _GNSS_data.GNSS_Raws[i].pseudorange;
+      double SV_weight = cofactorMatrixCal_single_satellite(_GNSS_data.GNSS_Raws[i].elevation, _GNSS_data.GNSS_Raws[i].snr);
+      // SV_weight = SV_weight * 0.01; // 10  error is about 10~50 meters
+      // SV_weight = 3; // 10 
+
+      // Add clock bias prior factor for pseudorange observable
+      // graph->add(PriorFactor<Point2>(C(correction_count), prev_cb,cb_noise_model)); // add prior for clock bias factor
+
+      // boost::shared_ptr<PriorFactor <Point2> > cbPrior(
+      //                   new PriorFactor<Point2>(C(correction_count), prev_cb, cb_noise_model));
+
+      
+
+      if(enable_Pr_factor)
+      {
+        PseudorangeFactor_spp pseudorange_Factor_spp(X(correction_count), C(correction_count),range, satXYZ, sv_prn, nomXYZ, noiseModel::Diagonal::Sigmas( (gtsam::Vector(1) << SV_weight).finished()));
+        graph->add(pseudorange_Factor_spp);
+        std::cout<< "pseudorange weighting-> "<< SV_weight << std::endl;
+      }
+      
+       if(enbale_SCP_factor)
+      {
+         /***********switchable constraint****************/
+        PseudorangeSwitchFactor PseudorangeSwitch_Factor(X(correction_count), C(correction_count), S(correction_count),range, satXYZ, sv_prn, nomXYZ, noiseModel::Diagonal::Sigmas( (gtsam::Vector(1) << SV_weight).finished()));
+        graph->add(PseudorangeSwitch_Factor);
+      }
+     
+    }
+      
+
+      /***********add clock bias factor************/
+      Point2 zero_cb(0,0); // assume zero initial clock bias
+      // graph->add(BetweenFactor<Point2>(C(correction_count-1), 
+      //                                                 C(correction_count  ), 
+      //                                                 zero_cb, cb_noise_model));
+      
+      
       
       
       // Now optimize and compare results.
@@ -1505,9 +1581,11 @@ int main(int argc, char* argv[])
       initial_values.insert(V(correction_count), prop_state.v());
       initial_values.insert(B(correction_count), prev_bias);
       initial_values.insert(C(correction_count), prev_cb); // clock bias 
-      if(enbale_SC_factor)
+      initial_values.insert(S(correction_count),SwitchVariableLinear(sw_prior)); // switchable factor
+      if(enbale_SCP_factor)
       {
-        initial_values.insert(S(correction_count),SwitchVariableLinear(sw_prior)); // switchable factor
+        graph->add(PriorFactor<SwitchVariableLinear>(S(correction_count), sw_prior,sw_noise_model)); // add prior for switchable factor
+        // initial_values.insert(S(correction_count),SwitchVariableLinear(sw_prior)); // switchable factor
       }
       
 
@@ -1543,7 +1621,8 @@ int main(int argc, char* argv[])
       prev_bias = result.at<imuBias::ConstantBias>(B(correction_count));
 
       prev_cb = result.at<Point2>(C(correction_count));
-      std::cout<< "prev_cb-> " << prev_cb << std::endl;
+      double SC = (result.at<SwitchVariableLinear>(S(correction_count))).value();
+      std::cout<< "prev_cb-> " << prev_cb << "  S(correction_count)-> "<< SC << std::endl;
 
       // Reset the preintegration object.
       imu_preintegrated_->resetIntegrationAndSetBias(prev_bias);
